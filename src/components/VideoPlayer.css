@@ -22,14 +22,6 @@
   border-radius: 0.25rem;
 }
 
-/* .video-content {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  align-content: stretch;
-  margin-top: 20px;
-  flex-direction: row-reverse;
-} */
 .video-container {
  border-radius: 0.25rem;
  border: 2px solid #ccc;
