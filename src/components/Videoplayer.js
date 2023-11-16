@@ -9,10 +9,8 @@ const VideoPlayer = () => {
     const canvasRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [videoMetadata, setVideoMetadata] = useState(null);
-    const [hasAudio, setHasAudio] = useState(false);
     const wavesurferRef = useRef(null);
     const [videoSrc, setVideoSrc] = useState(null);
-    const fileSelectUserRef = useRef(null);
 
 
 
@@ -52,7 +50,7 @@ const VideoPlayer = () => {
         }
 
         const url = URL.createObjectURL(file);
-        // console.log("Here is the file", url);
+      
 
         const video = videoRef.current;
         video.src = url;
@@ -104,42 +102,21 @@ const VideoPlayer = () => {
             if (audioPres) {
                 gainNode.gain.value = 1;
                 video.currentTime = 0;
-                video.addEventListener("seeked", function drawThumbnail() {
-                    drawVideoFrame();
-                    video.pause();
-                    video.removeEventListener("seeked", drawThumbnail);
-                });
-
                 setVideoMetadata({
                     duration: video.duration,
                     height: video.videoHeight,
                     width: video.videoWidth,
                     aspectRatio: video.videoWidth / video.videoHeight,
-                    range: `${video.seekable.start(0)} - ${video.seekable.end(0).toFixed(2)}`,
                 });
             } else {
                 alert("The uploaded video has no Audio. Please try another.");
                 window.location.reload();
             }
-        }, 2000);
-
-        try {
-            const response = await fetch(url);
-            const arrayBuffer = await response.arrayBuffer();
-            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-
-            if (audioBuffer.numberOfChannels === 0) {
-                URL.revokeObjectURL(url);
-                setVideoSrc(null);
-                return;
-            }
-        } catch (error) {
-            console.error("Error fetching or decoding audio data:", error);
-        }
+        }, 2000); 
     };
 
 
-    console.log(isPlaying)
+    // console.log(isPlaying)
     const drawVideoFrame = () => {
         const canvas = canvasRef.current;
         const video = videoRef.current;
@@ -188,7 +165,6 @@ const VideoPlayer = () => {
                 const duration = video.duration;
                 const progress = currentTime / duration;
                 wavesurferRef.current.seekTo(progress);
-                setVideoMetadata((prevMdata) => ({ ...prevMdata, currentTime }));
             };
             video.addEventListener("timeupdate", onTimeUpdate);
             return () => video.removeEventListener("timeupdate", onTimeUpdate);
